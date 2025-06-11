@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¿Qué tan MiliPili sos? - Quiz Completo con Emojis</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-image: url('https://i.pinimg.com/736x/a5/d9/5c/a5d95c8113f24e861b03963410e9de8e.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+        
+        .quiz-container {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            box-shadow: 0 25px 50px rgba(255, 192, 203, 0.3);
+        }
+        
+        .question-card {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            border-radius: 20px;
+            transform: translateY(20px);
+            opacity: 0;
+            animation: slideIn 0.6s ease-out forwards;
+            box-shadow: 0 15px 35px rgba(255, 105, 180, 0.2);
+        }
+        
+        @keyframes slideIn {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .option-btn {
+            background: linear-gradient(45deg, #ff6b9d, #c44569);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 12px 20px;
+            margin: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(255, 105, 180, 0.3);
+            font-weight: 500;
+            text-align: left;
+        }
+        
+        .option-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(255, 105, 180, 0.4);
+            background: linear-gradient(45deg, #ff5e94, #b83d63);
+        }
+        
+        .option-btn.selected {
+            background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+            transform: scale(1.05);
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #ff6b9d, #8b5cf6, #06b6d4);
+            height: 8px;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            box-shadow: 0 4px 15px rgba(255, 105, 180, 0.4);
+        }
+        
+        .next-btn {
+            background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(139, 92, 246, 0.4);
+        }
+        
+        .result-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 25px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+        }
+        
+        .sparkle {
+            color: #ffd700;
+            animation: sparkle 1.5s infinite;
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .emoji {
+            font-size: 1.5rem;
+            margin-right: 8px;
+        }
+        
+        .title-gradient {
+            background: linear-gradient(45deg, #ff6b9d, #8b5cf6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="quiz-container max-w-4xl w-full p-8">
+        <!-- Título -->
+        <div class="text-center mb-8">
+            <h1 class="text-5xl font-bold title-gradient mb-4">
+                ¿Qué tan ✨MiliPili✨ sos?
+            </h1>
+            <p class="text-xl text-gray-600 font-medium">Contesta unas breves preguntas y te daremos el resultado al final 💕</p>
+        </div>
+
+        <!-- Barra de progreso -->
+        <div class="mb-8">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-sm font-medium text-gray-600">Pregunta <span id="current-question">1</span> de 20</span>
+                <span class="text-sm font-medium text-gray-600"><span id="progress-percent">0</span>%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-3">
+                <div class="progress-bar" style="width: 7.69%"></div>
+            </div>
+        </div>
+
+        <!-- Preguntas -->
+        <div id="quiz-container">
+            <!-- Pregunta 1 -->
+            <div class="question-card p-8 mb-6 question" data-question="1">
+                <h2 class="text-3xl font-bold text-white mb-6 text-center">
+                    ¿Cuál es tu deporte favorito?<span class="emoji">🏐🏑</span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button class="option-btn" data-points="3">🏑 Jockey</button>
+                    <button class="option-btn" data-points="0">⚽ Fútbol</button>
+                    <button class="option-btn" data-points="3">🏐 Vóley</button>
+                    <button class="option-btn" data-points="1">🎾 Tenis</button>
+                    <button class="option-btn" data-points="4">🐎 Polo</button>
+                    <button class="option-btn" data-points="0">🙈 No hago deporte</button>
+                </div>
+            </div>
+
+            <!-- Pregunta 2 -->
+            <div class="question-card p-8 mb-6 question hidden" data-question="2">
+                <h2 class="text-3xl font-bold text-white mb-6 text-center">
+                    ¿Cuántos autos hay en tu familia?<span class="emoji">🏎️🚘</span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button class="option-btn" data-points="0">🚗 1</button>
+                    <button class="option-btn" data-points="1">🚗🚗 2</button>
+                    <button class="option-btn" data-points="2">🚗🚘🛻 3</button>
+                    <button class="option-btn" data-points="3">🚗🚘🏎️🛻🏍️ 4 o más</button>
+                    <button class="option-btn" data-points="0">😟 No tengo</button>
+                </div>
+            </div>
+
+            <!-- Pregunta 3 -->
+            <div class="question-card p-8 mb-6 question hidden" data-question="3">
+                <h2 class="text-3xl font-bold text-white mb-6 text-center">
+                    ¿Te gusta Tini?<span class="emoji">👑</span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button class="option-btn" data-points="3">😍 Siii, la amooooo my queen 🌟</button>
+                    <button class="option-btn" data-points="1">😐 Maso...</button>
+                    <button class="option-btn" data-points="0">🙈 Nah</button>
+                </div>
+            </div>
+
+            <!-- Pregunta 4 -->
+            <div class="question-card p-8 mb-6 question hidden" data-question="4">
+                <h2 class="text-3xl font-bold text-white mb-6 text-center">
+                    ¿Gusto de helado favorito?<span class="emoji">🍨✨</span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button class="option-btn" data-points="3">🌰 Pistacho o sabores gourmet</button>
+                    <button class="option-btn" data-points="1">🌿 Menta granizada</button>
+                    <button class="option-btn" data-points="1">🍫 Chocolate</button>
+                    <button class="option-btn" data-points="0">🍯 Dulce de leche</button>
+                    <button class="option-btn" data-points="2">🍓 Frambuesa</button>
+                    <button class="option-btn" data-points="3">🥜 Ferrero Rocher</button>
+                    <button class="option-btn" data-points="0">🤍 Vainilla</button>
+                    <button class="option-btn" data-points="0">🫐 Frutos rojos</button>
+                </div>
+            </div>
+
+            <!-- Pregunta 5 -->
+            <div class="question-card p-8 mb-6 question hidden" data-question="5">
+                <h2 class="text-3xl font-bold text-white mb-6 text-center">
+                    ¿Cuántas veces saliste del país?<span class="emoji">🇩🇪🇪🇸🇺🇸</span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button class="option-btn" data-points="1">✈️ 1 o 2 veces</button>
+                    <button class="option-btn" data-points="2">✈️✈️ 3 o 4 veces</button>
+                    <button class="option-btn" data-points="3">✈️✈️✈️ Ya perdí la cuenta</button>
+                    <button class="option-btn" data-points="0">🙂‍↔️ Nunca salí del país</button>
+                </div>
+            </div>
+
+            <!-- Pregunta 6 -->
+            <div class="question-card p-8 mb-6 question hidden" data-question="6">
+                <h2 class="text-3xl font-bold text-white mb-6 text-center">
+                    ¿Tenés más de una propiedad?<span class="emoji">🏘️🏘️</span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button class="option-btn" data-points="1">🗝️ Alquilo</button>
+                    <button class="option-btn" data-points="0">🏡 Solo tengo una</button>
+                    <button class="option-btn" data-points="2">🏘️🏬 Tengo varias</button>
+                </div>
+            </div>
+
+            <!-- Pregunta 7 -->
+            <div class="question-card p-8 mb-6 question hidden" data-question="7">
+                <h2 class="text-3xl font-bold text-white mb-6 text-center">
+                    ¿Cada cuánto cambiás tu celular?<span class="emoji">📲</span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button class="option-btn" data-points="3">📱✨ Cada 6 meses aproximadamente</button>
+                    <button class="option-btn" data-points="2">📱 Cada año</button>
+                    <button class="option-btn" data-points="1">📱⏰ Cada 2-3 años</button>
+                    <button class="option-btn" data-points="0">💀 Cuando ya no funciona más</button>
+                </div>
+            </div>
+
+            <!-- Pregunta 8 -->
+            <div class="question-card p-8 mb-6 question hidden" data-question="8">
+                <h2 class="text-3xl font-bold text-white mb-6 text-center">
+                    ¿Fuiste a Disney?<span class="emoji">🏰✨</span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button class="option-btn" data-points="3">✨🏰 Sí, muchas veces</button>
+                    <button class="option-btn" data-points="1">⭐ Sí pero solo una vez</button>
+                    <button class="option-btn" data-points="0">😭 No </button>
+                </div>
+            </div>
+
+            <!-- Pregunta 9 -->
+            <div class="question-card p-8 mb-6 question hidden" data-question="9">
+                <h2 class="text-3xl font-bold text-white mb-6 text-center">
+                    ¿Tu papá es pelado o se está quedando pelado?<span class="emoji">🙉👨‍🦲</span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button class="option-btn" data-points="3">👨‍🦲 Sí, es pelado</button>
+                    <button class="option-btn" data-points="1">👨‍🦲💫 Se está quedando pelado</button>
+                    <button class="option-btn" data-points="0">👨🏻 No, tiene pelo</button>
+                    <button class="option-btn" data-points="1">🙈 Prefiero no responder</button>
+                </div>
+            </div>
+
+            <!-- Pregunta 10 -->
+            <div class="question-card p-8 mb-6 question hidden" data-question="10">
+                <h2 class="text-3xl font-bold text-white mb-6 text-center">
+                    ¿Color favorito?<span class="emoji">❤️🩷🧡💛💚💙🩵💜🤎</span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <button class="option-btn" data-points="1">❤️ Rojo</button>
+                    <button class="option-btn" data-points="3">🩷 Rosa</button>
+                    <button class="option-btn" data-points="2">💜 Violeta</button>
+                    <button class="option-btn" data-points="1">💙 Azul</button>
+                    <button class="option-btn" data-points="1">🖤 Negro</button>
+                    <button class="option-btn" data-points="2">🩵 Celeste</button>
+                    <button class="option-btn" data-points="2">🤍 Blanco</button>
+                    <button class="option-btn" data-points="3">💄 Rouge</button>
+                    <button class="option-btn" data-points="3">🩵✨ Cyan</button>
+                </div>
+            </div>
+
+            <!-- Pregunta 11 -->
+            <div class="question-card p-8 mb-6 question hidden" data-question="11">
+                <h2 class="text-3xl font-bold text-white mb-6 text-center">
+                    Para prepararte para el verano ¿Te gusta broncearte?<span class="emoji">😎☀️</span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button class="option-btn" data-points="1">☀️ Sí, tomo sol cuando puedo</button>
+                    <button class="option-btn" data-points="3">☀️🔥 Sí, tomo sol desde agosto para llegar con colorcito</button>
+                    <button class="option-btn" data-points="4">😎 No me gusta esperar, uso Autobronceante</button>
+                    <button class="option-btn" data-points="0">🙈 No me gusta para nada, odio tomar sol</button>
+                </div>
+            </div>
+
+            <!-- Pregunta 12 -->
+            <div class="question-card p-8 mb-6 question hidden" data-question="12">
+                <h2 class="text-3xl font-bold text-white mb-6 text-center">
+                    ¿Tipo de música que más te gusta?<span class="emoji">🎧🎵</span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button class="option-btn" data-points="3">🎤 Solo escucho Tini, Emilia y María Becerra</button>
+                    <button class="option-btn" data-points="3">📱✨ Amo la música de los trends de TikTok</button>
+                    <button class="option-btn" data-points="1">🇦🇷 Escucho el Top 50 Argentina solamente</button>
+                    <button class="option-btn" data-points="2">🎧 Techno</button>
+                    <button class="option-btn" data-points="0">🎵 Reggaeton</button>
+                    <button class="option-btn" data-points="2">🇺🇸 Solo música en inglés</button>
+                    <button class="option-btn" data-points="3">💖 TAYLOR SWIFT</button>
+                </div>
+            </div>-->
+
+            <!-- Pregunta 13 -->
+            <div class="question-card p-8 mb-6 question hidden" data-question="13">
+                <h2 class="text-3xl font-bold text-white mb-6 text-center">
+                    ¿Trago favorito?<span class="emoji">🍸🥂</span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <button class="option-btn" data-points="0">🥃 Fernet</button>
+                    <button class="option-btn" data-points="3">🍸 Gin Tonic</button>
+                    <button class="option-btn" data-points="0">🍺 Pritteado</button>
+                    <button class="option-btn" data-points="3">🍹 Vodka</button>
+                    <button class="option-btn" data-points="2">🥥 Malibu</button>
+                    <button class="option-btn" data-points="1">🍷 Vinito tinto</button>
+                    <button class="option-btn" data-points="3">🥂 Vinito blanco</button>
+                    <button class="option-btn" data-points="0">🍺 Cerveza</button>
+                    <button class="option-btn" data-points="0">🙈 No tomo</button>
+                </div>
+            </div>
+            <!-- Pregunta 14 -->
+            <div class="question-card p-8 mb-6 question hidden" data-question="14">
+                <h2 class="text-3xl font-bold text-white mb-6 text-center">
+                    ¿Si vas de viaje al sur con amigos, donde preferis dormir?<span class="emoji">...</span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button class="option-btn" data-points="0">⛺ En carpa</button>
+                    <button class="option-btn" data-points="3">🏩 En hostel</button>
+                    <button class="option-btn" data-points="4">🧟‍♂️ No, no toco pobres</button>
+                </div>
+            </div>
+            <!-- Pregunta 15 -->
+            <div class="question-card p-8 mb-6 question hidden" data-question="15">
+                <h2 class="text-3xl font-bold text-white mb-6 text-center">
+                    ¿Usas productos Stanley?<span class="emoji">...</span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button class="option-btn" data-points="4">🍾 Sii re. Solo uso Stanley</button>
+                    <button class="option-btn" data-points="2">💰 Ay no, pero me gustaria comprarme uno</button>
+                    <button class="option-btn" data-points="0">😢 Noo</button>
+                </div>
+            </div>
+            <!-- Pregunta 16 -->
+            <div class="question-card p-8 mb-6 question hidden" data-question="16">
+                <h2 class="text-3xl font-bold text-white mb-6 text-center">
+                    ¿Que expresion usas mas?<span class="emoji">...</span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button class="option-btn" data-points="1">🍾 Tipoo...</button>
+                    <button class="option-btn" data-points="3">💰 Ay amiga</button>
+                    <button class="option-btn" data-points="4">😢 Re sii</button>
+                </div>
+            </div>
+            <!-- Pregunta 17 -->
+            <div class="question-card p-8 mb-6 question hidden" data-question="17">
+                <h2 class="text-3xl font-bold text-white mb-6 text-center">
+                    ¿Que plan preferis?<span class="emoji">...</span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button class="option-btn" data-points="4">🍾 Tarde de SPA</button>
+                    <button class="option-btn" data-points="1">💰 Caminata en las sierras</button>
+                    <button class="option-btn" data-points="2">😢 Ir al a la peluu</button>
+                </div>
+            </div>
+            <!-- Pregunta 18 -->
+            <div class="question-card p-8 mb-6 question hidden" data-question="18">
+                <h2 class="text-3xl font-bold text-white mb-6 text-center">
+                    ¿Cuanto tiempo tardas en elegir tu Outfit?<span class="emoji">...</span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button class="option-btn" data-points="1">🍾 15 min</button>
+                    <button class="option-btn" data-points="3">💰 30 min</button>
+                    <button class="option-btn" data-points="4">😢 1 hora</button>
+                    <button class="option-btn" data-points="4">😢 Ay nunca me decidoo</button>
+                </div>
+            </div>
+            <!-- Pregunta 19 -->
+            <div class="question-card p-8 mb-6 question hidden" data-question="19">
+                <h2 class="text-3xl font-bold text-white mb-6 text-center">
+                    ¿Cual es tu red social fav?<span class="emoji">...</span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button class="option-btn" data-points="1">🍾 Tiktok</button>
+                    <button class="option-btn" data-points="3">💰 Instagram</button>
+                    <button class="option-btn" data-points="4">😢 Vsco</button>
+                    <button class="option-btn" data-points="4">😢 Snapchat</button>
+                </div>
+            </div>
+            <!-- Pregunta 20 -->
+            <div class="question-card p-8 mb-6 question hidden" data-question="20">
+                <h2 class="text-3xl font-bold text-white mb-6 text-center">
+                    ¿Siempre llevas a tus chongos al mismo bar?<span class="emoji">...</span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button class="option-btn" data-points="4">🍾 Siii re (Saint Gallen Bar)</button>
+                    <button class="option-btn" data-points="2">💰 Ay no, que feo</button>
+                    <button class="option-btn" data-points="3">😢 Prefiero que el me lleve</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botón siguiente -->
+        <div class="text-center mt-8">
+            <button id="next-btn" class="next-btn hidden">Siguiente Pregunta <i class="fas fa-arrow-right ml-2"></i></button>
+        </div>
+
+        <!-- Resultados -->
+        <div id="results" class="hidden">
+            <div class="result-card">
+                <div class="text-6xl mb-4" id="result-emoji">💎</div>
+                <h2 class="text-4xl font-bold mb-4" id="result-title">¡Súper MiliPili!</h2>
+                <p class="text-xl mb-6" id="result-description">Sos una verdadera MiliPili de corazón ✨</p>
+                <div class="text-3xl font-bold mb-6">
+                    Tu puntuación: <span id="final-score">0</span>%
+                </div>
+                <div class="flex justify-center space-x-4 mt-8">
+                    <button onclick="shareResult()" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-full font-semibold transition-all">
+                        <i class="fas fa-share-alt mr-2"></i>Compartir Resultado
+                    </button>
+                    <button onclick="restartQuiz()" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-full font-semibold transition-all">
+                        <i class="fas fa-redo mr-2"></i>Hacer de Nuevo
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 1;
+        let totalScore = 0;
+        let maxScore = 68; // Máximo puntaje posible
+        let answers = {};
+
+        // Manejar selección de opciones
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('option-btn')) {
+                const currentQuestionDiv = document.querySelector(`[data-question="${currentQuestion}"]`);
+                const options = currentQuestionDiv.querySelectorAll('.option-btn');
+                
+                // Remover selección anterior
+                options.forEach(btn => btn.classList.remove('selected'));
+                
+                // Seleccionar nueva opción
+                e.target.classList.add('selected');
+                
+                // Guardar respuesta
+                answers[currentQuestion] = parseInt(e.target.dataset.points);
+                
+                // Mostrar botón siguiente
+                document.getElementById('next-btn').classList.remove('hidden');
+            }
+        });
+
+        // Manejar botón siguiente
+        document.getElementById('next-btn').addEventListener('click', function() {
+            // cantidad de preguntas
+            if (currentQuestion < 20) {
+                // Ocultar pregunta actual
+                document.querySelector(`[data-question="${currentQuestion}"]`).classList.add('hidden');
+                
+                // Mostrar siguiente pregunta
+                currentQuestion++;
+                const nextQuestion = document.querySelector(`[data-question="${currentQuestion}"]`);
+                nextQuestion.classList.remove('hidden');
+                
+                // Actualizar progreso
+                updateProgress();
+                
+                // Ocultar botón siguiente
+                document.getElementById('next-btn').classList.add('hidden');
+                
+                // Si es la última pregunta, cambiar texto del botón
+                // Cantidad de preguntas
+                if (currentQuestion === 20) {
+                    document.getElementById('next-btn').innerHTML = 'Ver Resultados <i class="fas fa-star ml-2"></i>';
+                }
+            } else {
+                // Mostrar resultados
+                showResults();
+            }
+        });
+
+        function updateProgress() {
+            const progress = (currentQuestion / 20) * 100;
+            document.querySelector('.progress-bar').style.width = progress + '%';
+            document.getElementById('current-question').textContent = currentQuestion;
+            document.getElementById('progress-percent').textContent = Math.round(progress);
+        }
+
+        function showResults() {
+            // Calcular puntaje total
+            totalScore = Object.values(answers).reduce((sum, score) => sum + score, 0);
+            const percentage = Math.round((totalScore / maxScore) * 100);
+            
+            // Ocultar quiz
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('next-btn').classList.add('hidden');
+            
+            // Determinar resultado
+            let resultTitle, resultDescription, resultEmoji;
+            
+            if (percentage >= 98) {
+                resultTitle = '¡Súper RE MiliPili! 💎✨💋';
+                resultDescription = 'Sos la definicion de MiliPili. Tu estilo de vida es superior al de los normales 💅🏻';
+                resultEmoji = '💎';
+            } else if (percentage >= 76) {
+                resultTitle = '¡Súper MiliPili! 💎✨';
+                resultDescription = 'Sos una verdadera MiliPili de corazón. Tu estilo de vida es súper cheto y refinado 👑';
+                resultEmoji = '💎';
+            } else if (percentage >= 51) {
+                resultTitle = '¡Bastante MiliPili! 👑';
+                resultDescription = 'Tenés muchas características MiliPili. Te gusta la buena vida 💕';
+                resultEmoji = '👑';
+            } else if (percentage >= 26) {
+                resultTitle = '¡Un poquito MiliPili! 💕';
+                resultDescription = 'Tenés algunas cositas MiliPili, pero también sos muy auténtica 🌸';
+                resultEmoji = '💕';
+            } else {
+                resultTitle = '¡Nada MiliPili! 😅';
+                resultDescription = 'Sos súper auténtica y natural. No necesitás ser MiliPili para brillar ✨';
+                resultEmoji = '😅';
+            }
+            
+            // Mostrar resultados
+            document.getElementById('result-emoji').textContent = resultEmoji;
+            document.getElementById('result-title').textContent = resultTitle;
+            document.getElementById('result-description').textContent = resultDescription;
+            document.getElementById('final-score').textContent = percentage;
+            document.getElementById('results').classList.remove('hidden');
+        }
+
+        function shareResult() {
+            const percentage = Math.round((totalScore / maxScore) * 100);
+            const text = `¡Acabo de hacer el quiz "¿Qué tan MiliPili sos?" y saqué ${percentage}%! 💕✨`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: '¿Qué tan MiliPili sos?',
+                    text: text,
+                    url: window.location.href
+                });
+            } else {
+                // Fallback para navegadores sin Web Share API
+                navigator.clipboard.writeText(text + ' ' + window.location.href).then(() => {
+                    alert('¡Resultado copiado al portapapeles! 📋✨');
+                });
+            }
+        }
+
+        function restartQuiz() {
+            currentQuestion = 1;
+            totalScore = 0;
+            answers = {};
+            
+            // Ocultar resultados
+            document.getElementById('results').classList.add('hidden');
+            
+            // Mostrar primera pregunta
+            document.querySelectorAll('.question').forEach(q => q.classList.add('hidden'));
+            document.querySelector('[data-question="1"]').classList.remove('hidden');
+            
+            // Mostrar contenedor del quiz
+            document.getElementById('quiz-container').classList.remove('hidden');
+            
+            // Resetear progreso
+            updateProgress();
+            
+            // Remover todas las selecciones
+            document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+            
+            // Ocultar botón siguiente
+            document.getElementById('next-btn').classList.add('hidden');
+            document.getElementById('next-btn').innerHTML = 'Siguiente Pregunta <i class="fas fa-arrow-right ml-2"></i>';
+        }
+
+        // Inicializar progreso
+        updateProgress();
+    </script>
+</body>
+</html>
